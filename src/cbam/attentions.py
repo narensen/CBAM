@@ -24,6 +24,20 @@ class ChannelAttention(nn.Module):
 
 class SpatialAttention(nn.Module):
 
-    def __init__(self, kernel_size)
+    def __init__(self, kernel_size : int = 7):
+        super().__init__()
+        assert kernel_size % 2 == 1
+        self.conv = nn.Conv2d(
+            2, 1, kernel_size=kernel_size,
+            padding=kernel_size//2,
+            bias=False
+        )
+
+    def forward(self, x: torch.Tensor):
+
+        avg = x.mean(dim=1, keepdim=True)
+        max = x.amax(dim=1, keepdim=True)
+        return torch.sigmoid(self.conv(torch.cat([avg, max], dim=1)))
+
 
 
